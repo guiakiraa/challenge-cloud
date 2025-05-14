@@ -24,6 +24,6 @@ public class Localizacao {
     @Enumerated(EnumType.STRING)
     private FonteEnum fonte;
     @ManyToOne
-    @JoinColumn(name = "id_moto")
+    @JoinColumn(name = "fk_moto")
     private Moto moto;
 }

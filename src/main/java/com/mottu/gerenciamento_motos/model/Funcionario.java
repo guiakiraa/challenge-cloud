@@ -20,6 +20,6 @@ public class Funcionario {
     @Size(min = 1, max = 100, message = "Valor inválido para nome. Ele precisa ter de 1 a 100 caracteres")
     private String nome;
     @ManyToOne
-    @JoinColumn(name = "id_filial")
+    @JoinColumn(name = "fk_filial")
     private Filial filial;
 }

@@ -20,6 +20,6 @@ public class Filial {
     @Size(min = 1, max = 100, message = "Valor inválido para nome. Ele precisa ter de 1 a 100 caracteres")
     private String nome;
     @ManyToOne
-    @JoinColumn(name = "id_endereco")
+    @JoinColumn(name = "fk_endereco")
     private Endereco endereco;
 }

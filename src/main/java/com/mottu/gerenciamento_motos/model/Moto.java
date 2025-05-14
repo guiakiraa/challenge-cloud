@@ -27,7 +27,7 @@ public class Moto {
     @Enumerated(EnumType.STRING)
     private TipoCombustivelEnum tipoCombustivel;
     @ManyToOne
-    @JoinColumn(name = "id_filial")
+    @JoinColumn(name = "fk_filial")
     private Filial filial;
 
 }
