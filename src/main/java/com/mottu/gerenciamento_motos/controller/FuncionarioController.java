@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping(value = "/enderecos")
+@RequestMapping(value = "/funcionarios")
 public class FuncionarioController {
 
     @Autowired
@@ -32,7 +32,7 @@ public class FuncionarioController {
 
     @Operation(
             tags = "Retorno de informação",
-            summary = "Busca todos os funcionarios"
+            summary = "Busca todos os funcionários"
     )
     @GetMapping("/todas")
     public List<FuncionarioDTO> listar() {
@@ -41,7 +41,7 @@ public class FuncionarioController {
 
     @Operation(
             tags = "Retorno de informação",
-            summary = "Busca todas os funcionários e exibe em forma de páginas. Evitando muitos resultados de um vez"
+            summary = "Busca todos os funcionários e exibe em forma de páginas. Evitando muitos resultados de um vez"
     )
     @GetMapping("/paginadas")
     public ResponseEntity<Page<FuncionarioDTO>> paginar(

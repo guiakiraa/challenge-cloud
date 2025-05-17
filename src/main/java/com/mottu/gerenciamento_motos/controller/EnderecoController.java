@@ -32,7 +32,7 @@ public class EnderecoController {
 
     @Operation(
             tags = "Retorno de informação",
-            summary = "Busca todas ao endereços"
+            summary = "Busca todos os endereços"
     )
     @GetMapping("/todas")
     public List<EnderecoDTO> listar() {
@@ -41,7 +41,7 @@ public class EnderecoController {
 
     @Operation(
             tags = "Retorno de informação",
-            summary = "Busca todas os endereços e exibe em forma de páginas. Evitando muitos resultados de um vez"
+            summary = "Busca todos os endereços e exibe em forma de páginas. Evitando muitos resultados de um vez"
     )
     @GetMapping("/paginadas")
     public ResponseEntity<Page<EnderecoDTO>> paginar(
