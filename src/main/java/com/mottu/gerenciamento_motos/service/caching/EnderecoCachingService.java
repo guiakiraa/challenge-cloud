@@ -1,5 +1,7 @@
 package com.mottu.gerenciamento_motos.service.caching;
 
+import com.mottu.gerenciamento_motos.dto.EnderecoDTO;
+import com.mottu.gerenciamento_motos.mapper.EnderecoMapper;
 import com.mottu.gerenciamento_motos.model.Endereco;
 import com.mottu.gerenciamento_motos.repository.EnderecoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,22 +19,32 @@ public class EnderecoCachingService {
     @Autowired
     private EnderecoRepository enderecoRepository;
 
-    @Cacheable(value = "findAll")
-    public List<Endereco> findAll() {
-        return enderecoRepository.findAll();
+    @Autowired
+    private EnderecoMapper enderecoMapper;
+
+    private EnderecoDTO mapearParaDTO(Endereco endereco) {
+        return enderecoMapper.toDto(endereco);
     }
 
-    @Cacheable(value = "findAllPaginada", key = "#pageRequest")
-    public Page<Endereco> paginar(PageRequest pageRequest) {
-        return enderecoRepository.findAll(pageRequest);
+    @Cacheable(value = "listarEnderecos")
+    public List<EnderecoDTO> findAll() {
+        List<Endereco> enderecos = enderecoRepository.findAll();
+        return enderecos.stream().map(this::mapearParaDTO).toList();
     }
 
-    @Cacheable(value = "findById", key = "#id")
-    public Optional<Endereco> findById(Long id) {
-        return enderecoRepository.findById(id);
+    @Cacheable(value = "buscarEnderecoPorId", key = "#id")
+    public Optional<EnderecoDTO> findById(Long id) {
+        return enderecoRepository.findById(id)
+                .map(this::mapearParaDTO);
     }
 
-    @CacheEvict(value = {"findAll", "paginar", "findById"}, allEntries = true)
+    @Cacheable(value = "paginarFiliais", key = "#pageRequest")
+    public Page<EnderecoDTO> paginar(PageRequest pageRequest) {
+        Page<Endereco> enderecos = enderecoRepository.findAll(pageRequest);
+        return enderecos.map(this::mapearParaDTO);
+    }
+
+    @CacheEvict(value = {"listarEnderecos", "paginarFiliais", "buscarEnderecoPorId"}, allEntries = true)
     public void clearCache() {
     }
 }

@@ -5,6 +5,7 @@ import com.mottu.gerenciamento_motos.model.Filial;
 import com.mottu.gerenciamento_motos.repository.FilialRepository;
 import com.mottu.gerenciamento_motos.service.caching.FilialCachingService;
 import com.mottu.gerenciamento_motos.service.paginacao.FilialPaginacaoService;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -21,32 +22,44 @@ import java.util.Optional;
 public class FilialController {
 
     @Autowired
-    private FilialRepository filialRepository;
+    private FilialRepository repository;
 
     @Autowired
-    private FilialCachingService filialCachingService;
+    private FilialCachingService cachingService;
 
     @Autowired
-    private FilialPaginacaoService filialPaginacaoService;
+    private FilialPaginacaoService paginacaoService;
 
+    @Operation(
+            tags = "Retorno de informação",
+            summary = "Busca todas as filiais"
+    )
     @GetMapping("/todas")
-    public List<FilialDTO> listarFiliais() {
-        return filialCachingService.findAll();
+    public List<FilialDTO> listar() {
+        return cachingService.findAll();
     }
 
+    @Operation(
+            tags = "Retorno de informação",
+            summary = "Busca todas as filias e exibe em forma de páginas. Evitando muitos resultados de um vez"
+    )
     @GetMapping("/paginadas")
-    public ResponseEntity<Page<FilialDTO>> paginarFiliais(
+    public ResponseEntity<Page<FilialDTO>> paginar(
             @RequestParam(value = "pagina", defaultValue = "0") Integer page,
             @RequestParam(value = "tamanho", defaultValue = "2") Integer size
                                                                                 ) {
         PageRequest pageRequest = PageRequest.of(page, size);
-        Page<FilialDTO> filiaisPaginadas = filialPaginacaoService.paginar(pageRequest);
+        Page<FilialDTO> filiaisPaginadas = paginacaoService.paginar(pageRequest);
         return new ResponseEntity<>(filiaisPaginadas, HttpStatus.OK);
     }
 
+    @Operation(
+            tags = "Retorno de informação",
+            summary = "Busca uma filial pelo ID"
+    )
     @GetMapping(value = "/{id}")
-    public FilialDTO buscarFilialPorId(@PathVariable Long id) {
-        Optional<FilialDTO> filial = filialCachingService.findById(id);
+    public FilialDTO buscarPorId(@PathVariable Long id) {
+        Optional<FilialDTO> filial = cachingService.findById(id);
         if (filial.isPresent()) {
             return filial.get();
         }
@@ -55,19 +68,27 @@ public class FilialController {
         }
     }
 
+    @Operation(
+            tags = "Inserção de informação",
+            summary = "Cadastra uma nova filial"
+    )
     @PostMapping("/inserir")
-    public Filial salvarFilial(@RequestBody Filial filial) {
-        return filialRepository.save(filial);
+    public Filial salvar(@RequestBody Filial filial) {
+        return repository.save(filial);
     }
 
+    @Operation(
+            tags = "Atualização de informação",
+            summary = "Atualiza uma filial já existente pelo ID"
+    )
     @PutMapping(value = "/atualizar/{id}")
-    public Filial atualizarFilial(@PathVariable Long id, @RequestBody Filial filial) {
-        Optional<Filial> filialOptional = filialRepository.findById(id);
+    public Filial atualizar(@PathVariable Long id, @RequestBody Filial filial) {
+        Optional<Filial> filialOptional = repository.findById(id);
         if (filialOptional.isPresent()) {
             Filial filialAtual = filialOptional.get();
             filialAtual.setNome(filial.getNome());
-            filialRepository.save(filialAtual);
-            filialCachingService.clearCache();
+            repository.save(filialAtual);
+            cachingService.clearCache();
             return filialAtual;
         }
         else {
@@ -75,12 +96,16 @@ public class FilialController {
         }
     }
 
+    @Operation(
+            tags = "Remoção de informação",
+            summary = "Remove uma filial pelo ID"
+    )
     @DeleteMapping("/remover/{id}")
-    public Filial removerFilial(@PathVariable Long id) {
-        Optional<Filial> filial = filialRepository.findById(id);
+    public Filial remover(@PathVariable Long id) {
+        Optional<Filial> filial = repository.findById(id);
         if (filial.isPresent()) {
-            filialRepository.delete(filial.get());
-            filialCachingService.clearCache();
+            repository.delete(filial.get());
+            cachingService.clearCache();
             return filial.get();
         }
         else {
