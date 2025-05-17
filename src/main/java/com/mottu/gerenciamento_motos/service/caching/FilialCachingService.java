@@ -1,5 +1,7 @@
 package com.mottu.gerenciamento_motos.service.caching;
 
+import com.mottu.gerenciamento_motos.dto.FilialDTO;
+import com.mottu.gerenciamento_motos.mapper.FilialMapper;
 import com.mottu.gerenciamento_motos.model.Filial;
 import com.mottu.gerenciamento_motos.repository.FilialRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,22 +19,32 @@ public class FilialCachingService {
     @Autowired
     private FilialRepository filialRepository;
 
-    @Cacheable(value = "findAll")
-    public List<Filial> findAll() {
-        return filialRepository.findAll();
+    @Autowired
+    private FilialMapper filialMapper;
+
+    private FilialDTO mapearParaDTO(Filial filial) {
+        return filialMapper.toDto(filial);
     }
 
-    @Cacheable(value = "findAllPaginada", key = "#pageRequest")
-    public Page<Filial> paginar(PageRequest pageRequest) {
-        return filialRepository.findAll(pageRequest);
+    @Cacheable(value = "listarFiliais")
+    public List<FilialDTO> findAll() {
+        List<Filial> filials = filialRepository.findAll();
+        return filials.stream().map(this::mapearParaDTO).toList();
     }
 
-    @Cacheable(value = "findById", key = "#id")
-    public Optional<Filial> findById(Long id) {
-        return filialRepository.findById(id);
+    @Cacheable(value = "buscarFilialPorId", key = "#id")
+    public Optional<FilialDTO> findById(Long id) {
+        return filialRepository.findById(id)
+                .map(this::mapearParaDTO);
     }
 
-    @CacheEvict(value = {"findAll", "paginar", "findById"}, allEntries = true)
+    @Cacheable(value = "paginarFiliais", key = "#pageRequest")
+    public Page<FilialDTO> paginar(PageRequest pageRequest) {
+        Page<Filial> filials = filialRepository.findAll(pageRequest);
+        return filials.map(this::mapearParaDTO);
+    }
+
+    @CacheEvict(value = {"listarFiliais", "paginarFiliais", "buscarFilialPorId"}, allEntries = true)
     public void clearCache() {
     }
 }
