@@ -117,8 +117,27 @@ public class LocalizacaoController {
         }
     }
 
+    @Operation(
+            tags = "Retorno de informação",
+            summary = "Busca a última localização de uma moto específica"
+    )
     @GetMapping("/ultimaLocalizacaoMoto/{idMoto}")
     public LocalizacaoMotoProjection buscarUltimaLocalizacaoMoto(Long idMoto) {
-        return repository.findUltimaLocalizacaoDaMoto(idMoto);
+        LocalizacaoMotoProjection localizacaoMotoProjection = repository.findUltimaLocalizacaoDaMoto(idMoto);
+        if (localizacaoMotoProjection != null) {
+            return localizacaoMotoProjection;
+        }
+        else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @Operation(
+            tags = "Retorno de informação",
+            summary = "Busca a últimas localizações de todas as motos"
+    )
+    @GetMapping("/ultimasLocalizacoesMotos")
+    public List<LocalizacaoMotoProjection> buscarUltimasLocalizacoesMotos() {
+        return repository.findUltimasLocalizacoesDeTodasAsMotos();
     }
 }

@@ -14,19 +14,19 @@ RUN mvn clean package -DskipTests
 FROM eclipse-temurin:17-jre-alpine
 
 # Cria usuário sem privilégios
-RUN addgroup -S spring && adduser -S spring -G spring
+RUN addgroup -S challenge && adduser -S challenge -G challenge
 
 # Diretório do app
-WORKDIR /home/spring
+WORKDIR /home/challenge
 
 # Copia o JAR gerado da etapa de build
 COPY --from=builder /app/target/*.jar app.jar
 
 # Altera a permissão para o usuário spring
-RUN chown spring:spring app.jar
+RUN chown challenge:challenge app.jar
 
 # Alterna para o usuário não root
-USER spring
+USER challenge
 
 # Exposição da porta padrão do Spring Boot
 EXPOSE 8080

@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface LocalizacaoRepository extends JpaRepository<Localizacao, Long> {
 
@@ -23,5 +25,18 @@ public interface LocalizacaoRepository extends JpaRepository<Localizacao, Long> 
             "LIMIT 1",
             nativeQuery = true)
     public LocalizacaoMotoProjection findUltimaLocalizacaoDaMoto(@Param("idMoto") Long idMoto);
+
+    @Query(value = "SELECT DISTINCT ON (m.id) " +
+            "m.placa AS placa, " +
+            "m.modelo AS modelo, " +
+            "l.pontoX AS pontoX, " +
+            "l.pontoY AS pontoY, " +
+            "l.data_hora AS dataHora " +
+            "FROM localizacao l " +
+            "JOIN moto m ON l.fk_moto = m.id " +
+            "ORDER BY m.id, l.data_hora DESC",
+            nativeQuery = true)
+    List<LocalizacaoMotoProjection> findUltimasLocalizacoesDeTodasAsMotos();
+
 
 }

@@ -50,8 +50,13 @@ public class LocalizacaoCachingService {
         return localizacaoRepository.findUltimaLocalizacaoDaMoto(idMoto);
     }
 
+    @Cacheable(value = "buscarUltimasLocalizacoesDeTodasAsMotos")
+    public List<LocalizacaoMotoProjection> findUltimaLocalizacoesDeTodasAsMotos() {
+        return localizacaoRepository.findUltimasLocalizacoesDeTodasAsMotos();
+    }
+
     @CacheEvict(value = {"listarLocalizacoes", "paginarLocalizacoes", "buscarLocalizacaoPorId",
-            "buscarUltimaLocalizacaoDaMoto"}, allEntries = true)
+            "buscarUltimaLocalizacaoDaMoto", "buscarUltimasLocalizacoesDeTodasAsMotos"}, allEntries = true)
     public void clearCache() {
     }
 }
