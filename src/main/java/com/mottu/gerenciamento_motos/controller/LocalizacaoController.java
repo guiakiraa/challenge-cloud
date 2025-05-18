@@ -2,6 +2,7 @@ package com.mottu.gerenciamento_motos.controller;
 
 import com.mottu.gerenciamento_motos.dto.LocalizacaoDTO;
 import com.mottu.gerenciamento_motos.model.Localizacao;
+import com.mottu.gerenciamento_motos.projection.LocalizacaoMotoProjection;
 import com.mottu.gerenciamento_motos.repository.LocalizacaoRepository;
 import com.mottu.gerenciamento_motos.service.caching.LocalizacaoCachingService;
 import com.mottu.gerenciamento_motos.service.paginacao.LocalizacaoPaginacaoService;
@@ -114,5 +115,10 @@ public class LocalizacaoController {
         else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
+    }
+
+    @GetMapping("/ultimaLocalizacaoMoto/{idMoto}")
+    public LocalizacaoMotoProjection buscarUltimaLocalizacaoMoto(Long idMoto) {
+        return repository.findUltimaLocalizacaoDaMoto(idMoto);
     }
 }

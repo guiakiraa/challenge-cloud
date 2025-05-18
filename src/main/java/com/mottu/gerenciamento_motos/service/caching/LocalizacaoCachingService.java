@@ -3,6 +3,7 @@ package com.mottu.gerenciamento_motos.service.caching;
 import com.mottu.gerenciamento_motos.dto.LocalizacaoDTO;
 import com.mottu.gerenciamento_motos.mapper.LocalizacaoMapper;
 import com.mottu.gerenciamento_motos.model.Localizacao;
+import com.mottu.gerenciamento_motos.projection.LocalizacaoMotoProjection;
 import com.mottu.gerenciamento_motos.repository.LocalizacaoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
@@ -44,7 +45,13 @@ public class LocalizacaoCachingService {
         return localizacoes.map(this::mapearParaDTO);
     }
 
-    @CacheEvict(value = {"listarLocalizacoes", "paginarLocalizacoes", "buscarLocalizacaoPorId"}, allEntries = true)
+    @Cacheable(value = "buscarUltimaLocalizacaoDaMoto", key = "#idMoto")
+    public LocalizacaoMotoProjection findUltimaLocalizacaoDaMoto(Long idMoto) {
+        return localizacaoRepository.findUltimaLocalizacaoDaMoto(idMoto);
+    }
+
+    @CacheEvict(value = {"listarLocalizacoes", "paginarLocalizacoes", "buscarLocalizacaoPorId",
+            "buscarUltimaLocalizacaoDaMoto"}, allEntries = true)
     public void clearCache() {
     }
 }
