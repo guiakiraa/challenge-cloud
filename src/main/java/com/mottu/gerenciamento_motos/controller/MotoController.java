@@ -4,6 +4,7 @@ import com.mottu.gerenciamento_motos.dto.EnderecoDTO;
 import com.mottu.gerenciamento_motos.dto.MotoDTO;
 import com.mottu.gerenciamento_motos.model.Endereco;
 import com.mottu.gerenciamento_motos.model.Moto;
+import com.mottu.gerenciamento_motos.projection.MotoProjection;
 import com.mottu.gerenciamento_motos.repository.EnderecoRepository;
 import com.mottu.gerenciamento_motos.repository.MotoRepository;
 import com.mottu.gerenciamento_motos.service.caching.EnderecoCachingService;
@@ -119,5 +120,14 @@ public class MotoController {
         else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
+    }
+
+    @Operation(
+            tags = "Retorno de informação",
+            summary = "Busca todas as motos de uma filial pelo id da filial"
+    )
+    @GetMapping("/filial/{id}")
+    public List<MotoProjection> buscarMotosPeloIdFilial(@PathVariable Long id) {
+        return cachingService.findMotosByFilialId(id);
     }
 }

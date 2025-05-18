@@ -123,7 +123,7 @@ public class LocalizacaoController {
     )
     @GetMapping("/ultimaLocalizacaoMoto/{idMoto}")
     public LocalizacaoMotoProjection buscarUltimaLocalizacaoMoto(Long idMoto) {
-        LocalizacaoMotoProjection localizacaoMotoProjection = repository.findUltimaLocalizacaoDaMoto(idMoto);
+        LocalizacaoMotoProjection localizacaoMotoProjection = cachingService.findUltimaLocalizacaoDaMoto(idMoto);
         if (localizacaoMotoProjection != null) {
             return localizacaoMotoProjection;
         }
@@ -138,6 +138,6 @@ public class LocalizacaoController {
     )
     @GetMapping("/ultimasLocalizacoesMotos")
     public List<LocalizacaoMotoProjection> buscarUltimasLocalizacoesMotos() {
-        return repository.findUltimasLocalizacoesDeTodasAsMotos();
+        return cachingService.findUltimaLocalizacoesDeTodasAsMotos();
     }
 }

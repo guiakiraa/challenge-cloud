@@ -6,6 +6,7 @@ import com.mottu.gerenciamento_motos.mapper.LocalizacaoMapper;
 import com.mottu.gerenciamento_motos.mapper.MotoMapper;
 import com.mottu.gerenciamento_motos.model.Localizacao;
 import com.mottu.gerenciamento_motos.model.Moto;
+import com.mottu.gerenciamento_motos.projection.MotoProjection;
 import com.mottu.gerenciamento_motos.repository.LocalizacaoRepository;
 import com.mottu.gerenciamento_motos.repository.MotoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +47,11 @@ public class MotoCachingService {
     public Page<MotoDTO> paginar(PageRequest pageRequest) {
         Page<Moto> motos = motoRepository.findAll(pageRequest);
         return motos.map(this::mapearParaDTO);
+    }
+
+    @Cacheable(value = "buscarMotosDaFilial", key = "#idFilial")
+    public List<MotoProjection> findMotosByFilialId(Long idFilial) {
+        return motoRepository.findMotosByFilialId(idFilial);
     }
 
     @CacheEvict(value = {"listarMotos", "paginarMotos", "buscarMotoPorId"}, allEntries = true)
