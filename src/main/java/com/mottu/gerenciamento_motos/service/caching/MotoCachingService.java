@@ -1,6 +1,12 @@
 package com.mottu.gerenciamento_motos.service.caching;
 
+import com.mottu.gerenciamento_motos.dto.LocalizacaoDTO;
+import com.mottu.gerenciamento_motos.dto.MotoDTO;
+import com.mottu.gerenciamento_motos.mapper.LocalizacaoMapper;
+import com.mottu.gerenciamento_motos.mapper.MotoMapper;
+import com.mottu.gerenciamento_motos.model.Localizacao;
 import com.mottu.gerenciamento_motos.model.Moto;
+import com.mottu.gerenciamento_motos.repository.LocalizacaoRepository;
 import com.mottu.gerenciamento_motos.repository.MotoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
@@ -14,26 +20,35 @@ import java.util.Optional;
 
 @Service
 public class MotoCachingService {
-
     @Autowired
     private MotoRepository motoRepository;
 
-    @Cacheable(value = "findAll")
-    public List<Moto> findAll() {
-        return motoRepository.findAll();
+    @Autowired
+    private MotoMapper motoMapper;
+
+    private MotoDTO mapearParaDTO(Moto moto) {
+        return motoMapper.toDto(moto);
     }
 
-    @Cacheable(value = "findAllPaginada", key = "#pageRequest")
-    public Page<Moto> paginar(PageRequest pageRequest) {
-        return motoRepository.findAll(pageRequest);
+    @Cacheable(value = "listarMotos")
+    public List<MotoDTO> findAll() {
+        List<Moto> motos = motoRepository.findAll();
+        return motos.stream().map(this::mapearParaDTO).toList();
     }
 
-    @Cacheable(value = "findById", key = "#id")
-    public Optional<Moto> findById(Long id) {
-        return motoRepository.findById(id);
+    @Cacheable(value = "buscarMotoPorId", key = "#id")
+    public Optional<MotoDTO> findById(Long id) {
+        return motoRepository.findById(id)
+                .map(this::mapearParaDTO);
     }
 
-    @CacheEvict(value = {"findAll", "paginar", "findById"}, allEntries = true)
+    @Cacheable(value = "paginarMotos", key = "#pageRequest")
+    public Page<MotoDTO> paginar(PageRequest pageRequest) {
+        Page<Moto> motos = motoRepository.findAll(pageRequest);
+        return motos.map(this::mapearParaDTO);
+    }
+
+    @CacheEvict(value = {"listarMotos", "paginarMotos", "buscarMotoPorId"}, allEntries = true)
     public void clearCache() {
     }
 }

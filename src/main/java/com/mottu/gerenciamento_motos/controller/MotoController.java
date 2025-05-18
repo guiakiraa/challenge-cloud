@@ -1,10 +1,15 @@
 package com.mottu.gerenciamento_motos.controller;
 
 import com.mottu.gerenciamento_motos.dto.EnderecoDTO;
+import com.mottu.gerenciamento_motos.dto.MotoDTO;
 import com.mottu.gerenciamento_motos.model.Endereco;
+import com.mottu.gerenciamento_motos.model.Moto;
 import com.mottu.gerenciamento_motos.repository.EnderecoRepository;
+import com.mottu.gerenciamento_motos.repository.MotoRepository;
 import com.mottu.gerenciamento_motos.service.caching.EnderecoCachingService;
+import com.mottu.gerenciamento_motos.service.caching.MotoCachingService;
 import com.mottu.gerenciamento_motos.service.paginacao.EnderecoPaginacaoService;
+import com.mottu.gerenciamento_motos.service.paginacao.MotoPaginacaoService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -18,50 +23,50 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping(value = "/enderecos")
-public class EnderecoController {
+@RequestMapping(value = "/motos")
+public class MotoController {
 
     @Autowired
-    private EnderecoRepository repository;
+    private MotoRepository repository;
 
     @Autowired
-    private EnderecoCachingService cachingService;
+    private MotoCachingService cachingService;
 
     @Autowired
-    private EnderecoPaginacaoService paginacaoService;
+    private MotoPaginacaoService paginacaoService;
 
     @Operation(
             tags = "Retorno de informação",
-            summary = "Busca todos os endereços"
+            summary = "Busca todas as motos"
     )
     @GetMapping()
-    public List<EnderecoDTO> listar() {
+    public List<MotoDTO> listar() {
         return cachingService.findAll();
     }
 
     @Operation(
             tags = "Retorno de informação",
-            summary = "Busca todos os endereços e exibe em forma de páginas. Evitando muitos resultados de um vez"
+            summary = "Busca todas as motos e exibe em forma de páginas. Evitando muitos resultados de um vez"
     )
     @GetMapping("/paginadas")
-    public ResponseEntity<Page<EnderecoDTO>> paginar(
+    public ResponseEntity<Page<MotoDTO>> paginar(
             @RequestParam(value = "pagina", defaultValue = "0") Integer page,
             @RequestParam(value = "tamanho", defaultValue = "2") Integer size
     ) {
         PageRequest pageRequest = PageRequest.of(page, size);
-        Page<EnderecoDTO> enderecosPaginados = paginacaoService.paginar(pageRequest);
-        return new ResponseEntity<>(enderecosPaginados, HttpStatus.OK);
+        Page<MotoDTO> motosPaginadas = paginacaoService.paginar(pageRequest);
+        return new ResponseEntity<>(motosPaginadas, HttpStatus.OK);
     }
 
     @Operation(
             tags = "Retorno de informação",
-            summary = "Busca um endereço pelo ID"
+            summary = "Busca uma moto pelo ID"
     )
     @GetMapping(value = "/{id}")
-    public EnderecoDTO buscarPorId(@PathVariable Long id) {
-        Optional<EnderecoDTO> endereco = cachingService.findById(id);
-        if (endereco.isPresent()) {
-            return endereco.get();
+    public MotoDTO buscarPorId(@PathVariable Long id) {
+        Optional<MotoDTO> moto = cachingService.findById(id);
+        if (moto.isPresent()) {
+            return moto.get();
         }
         else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
@@ -70,32 +75,29 @@ public class EnderecoController {
 
     @Operation(
             tags = "Inserção de informação",
-            summary = "Cadastra um novo endereço"
+            summary = "Cadastra uma nova moto"
     )
     @PostMapping("/inserir")
-    public Endereco salvar(@RequestBody Endereco endereco) {
-        return repository.save(endereco);
+    public Moto salvar(@RequestBody Moto moto) {
+        return repository.save(moto);
     }
 
     @Operation(
             tags = "Atualização de informação",
-            summary = "Atualiza um endereço já existente pelo ID"
+            summary = "Atualiza uma moto já existente pelo ID"
     )
     @PutMapping(value = "/atualizar/{id}")
-    public Endereco atualizar(@PathVariable Long id, @RequestBody Endereco endereco) {
-        Optional<Endereco> enderecoOptional = repository.findById(id);
-        if (enderecoOptional.isPresent()) {
-            Endereco enderecoAtual = enderecoOptional.get();
-            enderecoAtual.setLogradouro(endereco.getLogradouro());
-            enderecoAtual.setNumero(endereco.getNumero());
-            enderecoAtual.setComplemento(endereco.getComplemento());
-            enderecoAtual.setCidade(endereco.getCidade());
-            enderecoAtual.setEstado(endereco.getEstado());
-            enderecoAtual.setCep(endereco.getCep());
-            enderecoAtual.setBairro(endereco.getBairro());
-            repository.save(enderecoAtual);
+    public Moto atualizar(@PathVariable Long id, @RequestBody Moto moto) {
+        Optional<Moto> motoOptional = repository.findById(id);
+        if (motoOptional.isPresent()) {
+            Moto motoAtual = motoOptional.get();
+            motoAtual.setAno(moto.getAno());
+            motoAtual.setPlaca(moto.getPlaca());
+            motoAtual.setModelo(moto.getModelo());
+            motoAtual.setTipoCombustivel(moto.getTipoCombustivel());
+            repository.save(motoAtual);
             cachingService.clearCache();
-            return enderecoAtual;
+            return motoAtual;
         }
         else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
@@ -104,15 +106,15 @@ public class EnderecoController {
 
     @Operation(
             tags = "Remoção de informação",
-            summary = "Remove um endereco pelo ID"
+            summary = "Remove uma moto pelo ID"
     )
     @DeleteMapping("/remover/{id}")
-    public Endereco remover(@PathVariable Long id) {
-        Optional<Endereco> endereco = repository.findById(id);
-        if (endereco.isPresent()) {
-            repository.delete(endereco.get());
+    public Moto remover(@PathVariable Long id) {
+        Optional<Moto> moto = repository.findById(id);
+        if (moto.isPresent()) {
+            repository.delete(moto.get());
             cachingService.clearCache();
-            return endereco.get();
+            return moto.get();
         }
         else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);

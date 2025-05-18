@@ -34,7 +34,7 @@ public class FilialController {
             tags = "Retorno de informação",
             summary = "Busca todas as filiais"
     )
-    @GetMapping("/todas")
+    @GetMapping()
     public List<FilialDTO> listar() {
         return cachingService.findAll();
     }

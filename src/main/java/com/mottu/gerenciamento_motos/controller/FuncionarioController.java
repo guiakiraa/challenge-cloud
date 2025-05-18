@@ -34,7 +34,7 @@ public class FuncionarioController {
             tags = "Retorno de informação",
             summary = "Busca todos os funcionários"
     )
-    @GetMapping("/todas")
+    @GetMapping()
     public List<FuncionarioDTO> listar() {
         return cachingService.findAll();
     }

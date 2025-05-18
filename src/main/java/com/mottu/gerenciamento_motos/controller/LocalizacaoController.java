@@ -34,7 +34,7 @@ public class LocalizacaoController {
             tags = "Retorno de informação",
             summary = "Busca todas as localizações"
     )
-    @GetMapping("/todas")
+    @GetMapping()
     public List<LocalizacaoDTO> listar() {
         return cachingService.findAll();
     }
