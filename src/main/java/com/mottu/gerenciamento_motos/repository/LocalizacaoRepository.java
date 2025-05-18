@@ -12,30 +12,32 @@ import java.util.List;
 @Repository
 public interface LocalizacaoRepository extends JpaRepository<Localizacao, Long> {
 
-    @Query(value = "SELECT " +
-            "m.placa AS placa, " +
-            "m.modelo AS modelo, " +
-            "l.pontoX AS pontoX, " +
-            "l.pontoY AS pontoY, " +
-            "l.data_hora AS dataHora " +
-            "FROM localizacao l " +
-            "JOIN moto m ON l.fk_moto = m.id " +
-            "WHERE m.id = :idMoto " +
-            "ORDER BY l.data_hora DESC " +
-            "LIMIT 1",
-            nativeQuery = true)
+    @Query(value = """
+        SELECT
+        m.placa AS placa,
+        m.modelo AS modelo,
+        l.pontoX AS pontoX,
+        l.pontoY AS pontoY,
+        l.data_hora AS dataHora
+        FROM localizacao l
+        JOIN moto m ON l.fk_moto = m.id
+        WHERE m.id = :idMoto
+        ORDER BY l.data_hora DESC
+        LIMIT 1
+        """, nativeQuery = true)
     public LocalizacaoMotoProjection findUltimaLocalizacaoDaMoto(@Param("idMoto") Long idMoto);
 
-    @Query(value = "SELECT DISTINCT ON (m.id) " +
-            "m.placa AS placa, " +
-            "m.modelo AS modelo, " +
-            "l.pontoX AS pontoX, " +
-            "l.pontoY AS pontoY, " +
-            "l.data_hora AS dataHora " +
-            "FROM localizacao l " +
-            "JOIN moto m ON l.fk_moto = m.id " +
-            "ORDER BY m.id, l.data_hora DESC",
-            nativeQuery = true)
+    @Query(value = """
+        SELECT DISTINCT ON (m.id)
+        m.placa AS placa,
+        m.modelo AS modelo,
+        l.pontoX AS pontoX,
+        l.pontoY AS pontoY,
+        l.data_hora AS dataHora
+        FROM localizacao l
+        JOIN moto m ON l.fk_moto = m.id
+        ORDER BY m.id, l.data_hora DESC
+    """, nativeQuery = true)
     List<LocalizacaoMotoProjection> findUltimasLocalizacoesDeTodasAsMotos();
 
 

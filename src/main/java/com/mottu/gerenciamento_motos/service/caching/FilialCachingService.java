@@ -44,7 +44,14 @@ public class FilialCachingService {
         return filials.map(this::mapearParaDTO);
     }
 
-    @CacheEvict(value = {"listarFiliais", "paginarFiliais", "buscarFilialPorId"}, allEntries = true)
+    @Cacheable(value = "buscarFiliaisDaCidade", key = "#cidade")
+    public List<FilialDTO> findFiliaisByCidade(String cidade) {
+        List<Filial> filials = filialRepository.findFiliaisDaCidade(cidade);
+        return filials.stream().map(this::mapearParaDTO).toList();
+    }
+
+    @CacheEvict(value = {"listarFiliais", "paginarFiliais", "buscarFilialPorId",
+            "buscarFiliaisDaCidade"}, allEntries = true)
     public void clearCache() {
     }
 }

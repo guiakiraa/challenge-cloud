@@ -12,8 +12,11 @@ import java.util.List;
 @Repository
 public interface MotoRepository extends JpaRepository<Moto, Long> {
 
-    @Query("SELECT m.placa AS placa, m.modelo AS modelo, m.ano AS ano, m.tipoCombustivel AS tipoCombustivel " +
-            "FROM Moto m WHERE m.filial.id = :idFilial")
+    @Query(value = """
+        SELECT m.placa AS placa, m.modelo AS modelo, m.ano AS ano, m.tipo_combustivel AS tipoCombustivel
+        FROM moto m
+        WHERE m.fk_filial = :idFilial
+    """, nativeQuery = true)
     List<MotoProjection> findMotosByFilialId(@Param("idFilial") Long filialId);
 
 }

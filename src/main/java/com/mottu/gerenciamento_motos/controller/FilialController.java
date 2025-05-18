@@ -112,4 +112,13 @@ public class FilialController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
     }
+
+    @Operation(
+            tags = "Retorno de informação",
+            summary = "Busca todas as filiais a partir de uma cidada"
+    )
+    @GetMapping("/endereco/{cidade}")
+    public List<FilialDTO> buscarFiliaisDaCidade(@PathVariable String cidade) {
+        return cachingService.findFiliaisByCidade(cidade);
+    }
 }
