@@ -9,7 +9,6 @@ import lombok.ToString;
 @ToString
 @EqualsAndHashCode
 public class FilialDTO {
-    private long id;
     private String nome;
     private Endereco endereco;
 }

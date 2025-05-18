@@ -10,7 +10,6 @@ import lombok.ToString;
 @ToString
 @EqualsAndHashCode
 public class LocalizacaoDTO {
-    private long id;
     private double pontoX;
     private double pontoY;
     private FonteEnum fonte;

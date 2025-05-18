@@ -11,7 +11,6 @@ import lombok.ToString;
 @ToString
 @EqualsAndHashCode
 public class MotoDTO {
-    private long id;
     private String placa;
     private ModeloEnum modelo;
     private int ano;

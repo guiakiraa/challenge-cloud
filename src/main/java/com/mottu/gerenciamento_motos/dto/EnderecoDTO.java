@@ -8,7 +8,6 @@ import lombok.ToString;
 @ToString
 @EqualsAndHashCode
 public class EnderecoDTO {
-    private long id;
     private String logradouro;
     private int numero;
     private String bairro;
