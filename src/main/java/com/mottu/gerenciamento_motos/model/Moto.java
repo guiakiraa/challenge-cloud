@@ -24,6 +24,10 @@ public class Moto {
     @Max(value = 2100, message = "O ano da moto deve ser igual ou inferior a 2025")
     private int ano;
 
+    @NotEmpty(message = "O modelo é obrigatório")
+    @Enumerated(EnumType.STRING)
+    private ModeloEnum modelo;
+
     @NotEmpty(message = "O tipo de combustível é obrigatório")
     @Enumerated(EnumType.STRING)
     private TipoCombustivelEnum tipoCombustivel;
