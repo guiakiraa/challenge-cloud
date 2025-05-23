@@ -1,9 +1,7 @@
 package com.mottu.gerenciamento_motos.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -17,17 +15,21 @@ public class Moto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    @NotEmpty(message = "Valor inválido para placa. Ela não pode ser vazio")
-    @Size(min = 7, max = 8, message = "Valor inválido para placa. Ela precisa ter de 7 a 8 caracteres (XXX1X11 ou XXX-1111)")
+
+    @NotEmpty(message = "A placa da moto não pode estar em branco")
+    @Pattern(regexp = "[A-Z]{3}\\d[A-Z]\\d{2}|[A-Z]{3}\\d{4}", message = "A placa deve estar no formato antigo (AAA1234) ou Mercosul (AAA1A23)")
     private String placa;
-    @Enumerated(EnumType.STRING)
-    private ModeloEnum modelo;
-    @Min(value = 2019, message = "Valor inválido para ano da moto. Ela precisa ser maior que 2019 pois a Mottu foi fundada em 2020 ")
+
+    @Min(value = 1900, message = "O ano da moto deve ser igual ou superior a 1900")
+    @Max(value = 2100, message = "O ano da moto deve ser igual ou inferior a 2025")
     private int ano;
+
+    @NotEmpty(message = "O tipo de combustível é obrigatório")
     @Enumerated(EnumType.STRING)
     private TipoCombustivelEnum tipoCombustivel;
+
+    @NotEmpty(message = "A filial da moto é obrigatória")
     @ManyToOne
     @JoinColumn(name = "fk_filial")
     private Filial filial;
-
 }

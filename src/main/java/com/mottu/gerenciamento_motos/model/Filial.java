@@ -16,9 +16,12 @@ public class Filial {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    @NotEmpty(message = "Valor inválido para nome. Ele não pode ser vazio")
-    @Size(min = 1, max = 100, message = "Valor inválido para nome. Ele precisa ter de 1 a 100 caracteres")
+
+    @NotEmpty(message = "O nome da filial não pode estar em branco")
+    @Size(max = 100, message = "O nome da filial deve ter no máximo 100 caracteres")
     private String nome;
+
+    @NotEmpty(message = "O endereço da filial é obrigatório")
     @ManyToOne
     @JoinColumn(name = "fk_endereco")
     private Endereco endereco;
