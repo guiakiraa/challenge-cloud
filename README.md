@@ -58,7 +58,7 @@ Com o Maven Wrapper:
 Agora acesse a aplicação em:
 
 ```
-http://localhost:8080/swagger-ui/index.html#/
+http://ip:8080/swagger-ui/index.html#/
 ```
 
 
