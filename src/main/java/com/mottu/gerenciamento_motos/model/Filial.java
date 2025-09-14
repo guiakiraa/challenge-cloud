@@ -2,6 +2,7 @@ package com.mottu.gerenciamento_motos.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -21,7 +22,7 @@ public class Filial {
     @Size(max = 100, message = "O nome da filial deve ter no máximo 100 caracteres")
     private String nome;
 
-    @NotEmpty(message = "O endereço da filial é obrigatório")
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "fk_endereco")
     private Endereco endereco;

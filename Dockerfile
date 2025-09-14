@@ -1,35 +1,31 @@
-# Etapa 1: build usando imagem do Maven
-FROM maven:3.9.6-eclipse-temurin-17-alpine AS builder
-
-# Cria diretório para a aplicação
+# Estágio 1: Build da aplicação com Maven e aproveitamento de cache
+FROM maven:3.9-eclipse-temurin-17 AS builder
 WORKDIR /app
 
-# Copia os arquivos do projeto
-COPY . .
+# Copie pom.xml e baixe dependências primeiro (cache eficiente)
+COPY pom.xml .
+RUN mvn dependency:go-offline
 
-# Compila o projeto e gera um JAR
+# Agora copie o código (apenas se necessário para rebuild)
+COPY src ./src
+
+# Compile o projeto
 RUN mvn clean package -DskipTests
 
-# Etapa 2: runtime usando imagem leve do JDK
-FROM eclipse-temurin:17-jre-alpine
+# Estágio 2: Imagem enxuta para execução
+FROM eclipse-temurin:17-jre
 
-# Cria usuário com diretório home e shell bash
-RUN adduser -h /home/challenge -s /bin/sh -D challenge
+# Criar usuário não-root antes de copiar arquivos
+RUN addgroup --system appuser && adduser --system --ingroup appuser appuser
+WORKDIR /app
 
-# Diretório do app
-WORKDIR /home/challenge
-
-# Copia o JAR gerado da etapa de build
+# Copie só o jar final
 COPY --from=builder /app/target/*.jar app.jar
+RUN chown appuser:appuser app.jar
 
-# Altera a permissão do JAR para o usuário
-RUN chown challenge:challenge app.jar
+USER appuser
 
-# Alterna para o usuário não root
-USER challenge
-
-# Exposição da porta padrão do Spring Boot
+# Exponha porta da aplicação
 EXPOSE 8080
 
-# Comando para rodar o JAR
 ENTRYPOINT ["java", "-jar", "app.jar"]
