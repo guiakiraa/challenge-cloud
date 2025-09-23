@@ -1,4 +1,5 @@
 -- DDL
+-- Tabela de Enderecos
 CREATE TABLE endereco (
     id BIGINT IDENTITY(1,1) PRIMARY KEY,
     logradouro VARCHAR(255) NOT NULL,
